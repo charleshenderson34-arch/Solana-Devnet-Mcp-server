@@ -1,0 +1,385 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<mcpManifest
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  version="2.0.0"
+  generated="2026-04-21T00:00:00Z">
+
+  <!-- ═══════════════════════════════════════════════════════════
+       MCP WALLET SERVER MANIFEST
+       Domain  : charleshendersonandhendfam.online
+       Owner   : Charles Henderson & HendFam
+       Network : Solana Devnet via Alchemy
+       RPC     : https://solana-devnet.g.alchemy.com/v2/RpMtmcFjjH4P737rmQvgun0TXXwNcAFW
+       Stack   : Alchemy · Solana Web3.js · Sentio MCP · Claude AI
+       ═══════════════════════════════════════════════════════════ -->
+
+  <server>
+    <name>mcp-wallet-server</name>
+    <version>2.0.0</version>
+    <domain>charleshendersonandhendfam.online</domain>
+    <baseUrl>https://charleshendersonandhendfam.online</baseUrl>
+    <mcpEndpoint>https://charleshendersonandhendfam.online/mcp</mcpEndpoint>
+    <transport>http</transport>
+    <protocol>MCP/1.0</protocol>
+    <description>
+      Multi-wallet MCP server for the Henderson family — powered by
+      Alchemy Solana Devnet, with Claude AI, Sentio MCP, BitPay,
+      Coinbase cb-mcp, Trust Wallet, and MetaMask support.
+    </description>
+  </server>
+
+  <!-- ── Alchemy RPC Configuration ────────────────────────────── -->
+  <alchemyConfig>
+    <network>Solana Devnet</network>
+    <rpcUrl>https://solana-devnet.g.alchemy.com/v2/RpMtmcFjjH4P737rmQvgun0TXXwNcAFW</rpcUrl>
+    <websocketUrl>wss://solana-devnet.g.alchemy.com/v2/RpMtmcFjjH4P737rmQvgun0TXXwNcAFW</websocketUrl>
+    <apiKey>RpMtmcFjjH4P737rmQvgun0TXXwNcAFW</apiKey>
+    <chain>solana</chain>
+    <environment>devnet</environment>
+
+    <!-- Alchemy Enhanced APIs available on this key -->
+    <enhancedApis>
+      <api name="getTokenBalances">
+        <endpoint>https://solana-devnet.g.alchemy.com/v2/RpMtmcFjjH4P737rmQvgun0TXXwNcAFW</endpoint>
+        <method>getTokenAccountsByOwner</method>
+        <description>Get all SPL token balances for a wallet</description>
+      </api>
+      <api name="getAssetsByOwner">
+        <endpoint>https://solana-devnet.g.alchemy.com/v2/RpMtmcFjjH4P737rmQvgun0TXXwNcAFW</endpoint>
+        <method>getAssetsByOwner</method>
+        <description>Get all NFTs and digital assets owned by a wallet (Metaplex)</description>
+      </api>
+      <api name="getSignaturesForAddress">
+        <endpoint>https://solana-devnet.g.alchemy.com/v2/RpMtmcFjjH4P737rmQvgun0TXXwNcAFW</endpoint>
+        <method>getSignaturesForAddress</method>
+        <description>Get transaction history for a Solana address</description>
+      </api>
+      <api name="getTransaction">
+        <endpoint>https://solana-devnet.g.alchemy.com/v2/RpMtmcFjjH4P737rmQvgun0TXXwNcAFW</endpoint>
+        <method>getTransaction</method>
+        <description>Fetch full transaction details by signature</description>
+      </api>
+      <api name="getAccountInfo">
+        <endpoint>https://solana-devnet.g.alchemy.com/v2/RpMtmcFjjH4P737rmQvgun0TXXwNcAFW</endpoint>
+        <method>getAccountInfo</method>
+        <description>Get on-chain account data for any Solana address</description>
+      </api>
+      <api name="getProgramAccounts">
+        <endpoint>https://solana-devnet.g.alchemy.com/v2/RpMtmcFjjH4P737rmQvgun0TXXwNcAFW</endpoint>
+        <method>getProgramAccounts</method>
+        <description>Fetch all accounts owned by a program</description>
+      </api>
+      <api name="simulateTransaction">
+        <endpoint>https://solana-devnet.g.alchemy.com/v2/RpMtmcFjjH4P737rmQvgun0TXXwNcAFW</endpoint>
+        <method>simulateTransaction</method>
+        <description>Simulate a transaction before sending (dry-run)</description>
+      </api>
+      <api name="sendTransaction">
+        <endpoint>https://solana-devnet.g.alchemy.com/v2/RpMtmcFjjH4P737rmQvgun0TXXwNcAFW</endpoint>
+        <method>sendTransaction</method>
+        <description>Broadcast a signed transaction to Solana devnet</description>
+      </api>
+      <api name="getSlot">
+        <endpoint>https://solana-devnet.g.alchemy.com/v2/RpMtmcFjjH4P737rmQvgun0TXXwNcAFW</endpoint>
+        <method>getSlot</method>
+        <description>Get current slot (Solana equivalent of block number)</description>
+      </api>
+      <api name="getRecentBlockhash">
+        <endpoint>https://solana-devnet.g.alchemy.com/v2/RpMtmcFjjH4P737rmQvgun0TXXwNcAFW</endpoint>
+        <method>getLatestBlockhash</method>
+        <description>Get latest blockhash for transaction construction</description>
+      </api>
+      <api name="requestAirdrop">
+        <endpoint>https://solana-devnet.g.alchemy.com/v2/RpMtmcFjjH4P737rmQvgun0TXXwNcAFW</endpoint>
+        <method>requestAirdrop</method>
+        <description>Request devnet SOL airdrop (up to 2 SOL per request)</description>
+      </api>
+    </enhancedApis>
+
+    <!-- WebSocket subscriptions -->
+    <subscriptions>
+      <sub name="accountSubscribe">Track live balance changes for a wallet</sub>
+      <sub name="signatureSubscribe">Get notified when a tx is confirmed</sub>
+      <sub name="slotSubscribe">Stream new slot (block) events in real time</sub>
+      <sub name="logsSubscribe">Stream program logs matching a filter</sub>
+    </subscriptions>
+  </alchemyConfig>
+
+  <!-- ── Artifacts / Apps ──────────────────────────────────────── -->
+  <artifacts>
+
+    <artifact id="chainview">
+      <name>ChainView — Solana Block Explorer</name>
+      <url>https://charleshendersonandhendfam.online/chainview</url>
+      <type>dashboard</type>
+      <framework>React</framework>
+      <rpcEndpoint>https://solana-devnet.g.alchemy.com/v2/RpMtmcFjjH4P737rmQvgun0TXXwNcAFW</rpcEndpoint>
+      <description>Live Solana slot/block explorer powered by Alchemy. Shows current slot, TPS, recent transactions, and account balances on devnet.</description>
+      <methods>
+        <method>getSlot</method>
+        <method>getRecentPerformanceSamples</method>
+        <method>getSignaturesForAddress</method>
+        <method>getBalance</method>
+      </methods>
+      <status>live</status>
+    </artifact>
+
+    <artifact id="wallet-dashboard">
+      <name>HendFam Wallet Dashboard</name>
+      <url>https://charleshendersonandhendfam.online/wallet</url>
+      <type>dashboard</type>
+      <framework>React</framework>
+      <rpcEndpoint>https://solana-devnet.g.alchemy.com/v2/RpMtmcFjjH4P737rmQvgun0TXXwNcAFW</rpcEndpoint>
+      <description>Signature-gated Solana wallet dashboard. Shows SOL balance, SPL token holdings, NFTs via Metaplex, and transaction history — all via Alchemy.</description>
+      <methods>
+        <method>getBalance</method>
+        <method>getTokenAccountsByOwner</method>
+        <method>getAssetsByOwner</method>
+        <method>getSignaturesForAddress</method>
+      </methods>
+      <status>live</status>
+    </artifact>
+
+    <artifact id="deploy-terminal">
+      <name>Solana Deploy Terminal</name>
+      <url>https://charleshendersonandhendfam.online/deploy</url>
+      <type>terminal</type>
+      <framework>React</framework>
+      <rpcEndpoint>https://solana-devnet.g.alchemy.com/v2/RpMtmcFjjH4P737rmQvgun0TXXwNcAFW</rpcEndpoint>
+      <description>Interactive Solana program deploy terminal. Runs: airdrop SOL → build program → deploy → confirm on devnet via Alchemy RPC.</description>
+      <methods>
+        <method>requestAirdrop</method>
+        <method>getBalance</method>
+        <method>sendTransaction</method>
+        <method>getSignatureStatuses</method>
+        <method>simulateTransaction</method>
+      </methods>
+      <status>live</status>
+    </artifact>
+
+    <artifact id="sentio-base">
+      <name>HendFam AI Dashboard</name>
+      <url>https://charleshendersonandhendfam.online/sentio</url>
+      <type>dashboard</type>
+      <framework>HTML/JS</framework>
+      <rpcEndpoint>https://solana-devnet.g.alchemy.com/v2/RpMtmcFjjH4P737rmQvgun0TXXwNcAFW</rpcEndpoint>
+      <description>Full Web3 analytics dashboard. Phantom wallet connect, live SOL price, Alchemy-powered transaction feed, Claude AI chat, and Sentio MCP analytics — all on Solana devnet.</description>
+      <methods>
+        <method>getBalance</method>
+        <method>getSlot</method>
+        <method>getSignaturesForAddress</method>
+        <method>getTransaction</method>
+        <method>getTokenAccountsByOwner</method>
+      </methods>
+      <status>live</status>
+    </artifact>
+
+  </artifacts>
+
+  <!-- ── MCP Tools exposed at /mcp ────────────────────────────── -->
+  <tools>
+
+    <tool name="get_sol_balance">
+      <endpoint>https://charleshendersonandhendfam.online/mcp</endpoint>
+      <alchemyMethod>getBalance</alchemyMethod>
+      <description>Get SOL balance for any Solana address</description>
+      <input>
+        <param name="address" type="string" required="true" description="Base58 Solana public key"/>
+      </input>
+    </tool>
+
+    <tool name="get_token_accounts">
+      <endpoint>https://charleshendersonandhendfam.online/mcp</endpoint>
+      <alchemyMethod>getTokenAccountsByOwner</alchemyMethod>
+      <description>Get all SPL token balances for a wallet</description>
+      <input>
+        <param name="owner" type="string" required="true" description="Wallet public key"/>
+        <param name="programId" type="string" required="false" default="TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"/>
+      </input>
+    </tool>
+
+    <tool name="get_nfts">
+      <endpoint>https://charleshendersonandhendfam.online/mcp</endpoint>
+      <alchemyMethod>getAssetsByOwner</alchemyMethod>
+      <description>Get all NFTs and Metaplex assets owned by a wallet</description>
+      <input>
+        <param name="owner" type="string" required="true"/>
+        <param name="page" type="number" required="false" default="1"/>
+        <param name="limit" type="number" required="false" default="10"/>
+      </input>
+    </tool>
+
+    <tool name="get_transaction">
+      <endpoint>https://charleshendersonandhendfam.online/mcp</endpoint>
+      <alchemyMethod>getTransaction</alchemyMethod>
+      <description>Fetch full Solana transaction details by signature</description>
+      <input>
+        <param name="signature" type="string" required="true" description="Base58 transaction signature"/>
+        <param name="commitment" type="string" required="false" default="finalized"/>
+      </input>
+    </tool>
+
+    <tool name="get_tx_history">
+      <endpoint>https://charleshendersonandhendfam.online/mcp</endpoint>
+      <alchemyMethod>getSignaturesForAddress</alchemyMethod>
+      <description>Get transaction history for a Solana address</description>
+      <input>
+        <param name="address" type="string" required="true"/>
+        <param name="limit" type="number" required="false" default="20"/>
+        <param name="before" type="string" required="false" description="Signature to paginate before"/>
+      </input>
+    </tool>
+
+    <tool name="get_account_info">
+      <endpoint>https://charleshendersonandhendfam.online/mcp</endpoint>
+      <alchemyMethod>getAccountInfo</alchemyMethod>
+      <description>Get on-chain account data for any Solana address</description>
+      <input>
+        <param name="address" type="string" required="true"/>
+        <param name="encoding" type="string" required="false" default="base64"/>
+      </input>
+    </tool>
+
+    <tool name="get_program_accounts">
+      <endpoint>https://charleshendersonandhendfam.online/mcp</endpoint>
+      <alchemyMethod>getProgramAccounts</alchemyMethod>
+      <description>Fetch all accounts owned by a Solana program</description>
+      <input>
+        <param name="programId" type="string" required="true"/>
+        <param name="filters" type="array" required="false"/>
+      </input>
+    </tool>
+
+    <tool name="simulate_transaction">
+      <endpoint>https://charleshendersonandhendfam.online/mcp</endpoint>
+      <alchemyMethod>simulateTransaction</alchemyMethod>
+      <description>Dry-run a transaction before broadcasting</description>
+      <input>
+        <param name="transaction" type="string" required="true" description="Base64-encoded serialized transaction"/>
+        <param name="commitment" type="string" required="false" default="finalized"/>
+      </input>
+    </tool>
+
+    <tool name="send_transaction">
+      <endpoint>https://charleshendersonandhendfam.online/mcp</endpoint>
+      <alchemyMethod>sendTransaction</alchemyMethod>
+      <description>Broadcast a signed transaction to Solana devnet</description>
+      <input>
+        <param name="transaction" type="string" required="true" description="Base64-encoded signed transaction"/>
+        <param name="skipPreflight" type="boolean" required="false" default="false"/>
+      </input>
+    </tool>
+
+    <tool name="request_airdrop">
+      <endpoint>https://charleshendersonandhendfam.online/mcp</endpoint>
+      <alchemyMethod>requestAirdrop</alchemyMethod>
+      <description>Request devnet SOL airdrop (max 2 SOL)</description>
+      <input>
+        <param name="address" type="string" required="true"/>
+        <param name="lamports" type="number" required="false" default="1000000000" description="1 SOL = 1,000,000,000 lamports"/>
+      </input>
+    </tool>
+
+    <tool name="get_slot">
+      <endpoint>https://charleshendersonandhendfam.online/mcp</endpoint>
+      <alchemyMethod>getSlot</alchemyMethod>
+      <description>Get current Solana slot number</description>
+      <input/>
+    </tool>
+
+    <tool name="get_latest_blockhash">
+      <endpoint>https://charleshendersonandhendfam.online/mcp</endpoint>
+      <alchemyMethod>getLatestBlockhash</alchemyMethod>
+      <description>Get latest blockhash for transaction construction</description>
+      <input>
+        <param name="commitment" type="string" required="false" default="finalized"/>
+      </input>
+    </tool>
+
+    <tool name="bitpay_get_rates">
+      <endpoint>https://charleshendersonandhendfam.online/mcp</endpoint>
+      <description>Get BitPay live SOL/USD exchange rates</description>
+      <input>
+        <param name="currency" type="string" required="false" default="USD"/>
+      </input>
+    </tool>
+
+    <tool name="coinbase_spot_price">
+      <endpoint>https://charleshendersonandhendfam.online/mcp</endpoint>
+      <description>Get Coinbase spot price for SOL-USD or other pairs</description>
+      <input>
+        <param name="pair" type="string" required="false" default="SOL-USD"/>
+      </input>
+    </tool>
+
+  </tools>
+
+  <!-- ── Integrations ──────────────────────────────────────────── -->
+  <integrations>
+
+    <integration id="alchemy-solana">
+      <name>Alchemy — Solana Devnet</name>
+      <rpcUrl>https://solana-devnet.g.alchemy.com/v2/RpMtmcFjjH4P737rmQvgun0TXXwNcAFW</rpcUrl>
+      <wsUrl>wss://solana-devnet.g.alchemy.com/v2/RpMtmcFjjH4P737rmQvgun0TXXwNcAFW</wsUrl>
+      <network>devnet</network>
+      <chain>solana</chain>
+      <description>Primary RPC and WebSocket provider for all Solana calls</description>
+    </integration>
+
+    <integration id="sentio-mcp">
+      <name>Sentio MCP</name>
+      <url>https://app.sentio.xyz</url>
+      <mcpCommand>npx -y @sentio/mcp</mcpCommand>
+      <description>On-chain analytics, metrics, alerts, and event processing</description>
+    </integration>
+
+    <integration id="coinbase-mcp">
+      <name>Coinbase cb-mcp</name>
+      <url>https://api.coinbase.com/v2</url>
+      <description>SOL spot prices and Coinbase wallet management</description>
+    </integration>
+
+    <integration id="bitpay">
+      <name>BitPay</name>
+      <url>https://bitpay.com/rates</url>
+      <description>Live fiat/crypto exchange rates including SOL</description>
+    </integration>
+
+    <integration id="claude-ai">
+      <name>Claude AI (Anthropic)</name>
+      <model>claude-sonnet-4-20250514</model>
+      <endpoint>https://api.anthropic.com/v1/messages</endpoint>
+      <description>AI agent powering wallet analysis, transaction summaries, and DeFi insights on Solana</description>
+    </integration>
+
+  </integrations>
+
+  <!-- ── Claude Desktop / Mobile Config ───────────────────────── -->
+  <claudeConfig>
+    <instructions>
+      Go to claude.ai → Settings → Connectors → Add Custom Connector
+      Paste the mcpEndpoint URL below. This syncs to your iPhone automatically.
+    </instructions>
+    <mcpServers>
+      <server name="hendfam-solana-mcp">
+        <transport>http</transport>
+        <url>https://charleshendersonandhendfam.online/mcp</url>
+      </server>
+      <server name="sentio-mcp">
+        <command>npx</command>
+        <args>-y @sentio/mcp</args>
+      </server>
+    </mcpServers>
+  </claudeConfig>
+
+  <!-- ── Sitemap ────────────────────────────────────────────────── -->
+  <sitemap>
+    <url loc="https://charleshendersonandhendfam.online/"          changefreq="daily"   priority="1.0"/>
+    <url loc="https://charleshendersonandhendfam.online/chainview"  changefreq="always"  priority="0.9"/>
+    <url loc="https://charleshendersonandhendfam.online/wallet"     changefreq="always"  priority="0.9"/>
+    <url loc="https://charleshendersonandhendfam.online/deploy"     changefreq="weekly"  priority="0.8"/>
+    <url loc="https://charleshendersonandhendfam.online/sentio"     changefreq="always"  priority="0.9"/>
+    <url loc="https://charleshendersonandhendfam.online/mcp"        changefreq="monthly" priority="0.7"/>
+  </sitemap>
+
+</mcpManifest>

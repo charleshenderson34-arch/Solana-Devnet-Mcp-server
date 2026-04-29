@@ -1,0 +1,28 @@
+mport { FinancialEvidence } from "./schema"; // Ensure your schema.graphql has this entity
+
+// This function processes your account statements from 2024–2026
+export async function broadcastStatementUpdate(ctx: any, statementData: any[]) {
+  for (const entry of statementData) {
+    // 1. Create a persistent record for audit
+    const record = new FinancialEvidence({
+      id: entry.transaction_id,
+      timestamp: BigInt(entry.unix_timestamp),
+      amount: entry.amount,
+      entity: "HENDFAM_BLUE_LIGHT",
+      status: "POST_COVERED_ACTION"
+    });
+
+    // 2. BROADCAST: Emit as a high-priority Sentio Event
+    // This makes the data searchable in real-time in your Sentio dashboard
+    ctx.eventLogger.emit("EvidenceBroadcast", {
+      distinctId: entry.transaction_id,
+      value: entry.amount,
+      description: "Post-SEC Action Financial Record",
+      claimRef: "SEC-WB-APP-SUBMITTED",
+      severity: 1 // Level 1 = Critical/Financial
+    });
+
+    await ctx.store.upsert(record);
+  }
+}
+
