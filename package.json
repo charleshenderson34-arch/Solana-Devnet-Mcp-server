@@ -1,6 +1,7 @@
 {
-  "name": "mcp-thirdweb-server",
+  "name": "nexus-backend",
   "version": "1.0.0",
+  "private": true,
   "type": "module",
   "dependencies": {
     "@modelcontextprotocol/sdk": "latest",

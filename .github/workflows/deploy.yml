@@ -14,14 +14,22 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Check secrets are present
+      - name: Setup Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Check secrets
         run: |
-          [ -n "$CF_TOKEN" ]   && echo "✅ CLOUDFLARE_API_TOKEN is set" || (echo "❌ CLOUDFLARE_API_TOKEN is MISSING - add it to repo secrets" && exit 1)
-          [ -n "$CF_ACCOUNT" ] && echo "✅ CLOUDFLARE_ACCOUNT_ID is set" || (echo "❌ CLOUDFLARE_ACCOUNT_ID is MISSING - add it to repo secrets" && exit 1)
+          [ -n "$CF_TOKEN" ]   && echo "✅ CLOUDFLARE_API_TOKEN set" || (echo "❌ CLOUDFLARE_API_TOKEN MISSING" && exit 1)
+          [ -n "$CF_ACCOUNT" ] && echo "✅ CLOUDFLARE_ACCOUNT_ID set" || (echo "❌ CLOUDFLARE_ACCOUNT_ID MISSING" && exit 1)
           echo "--- wrangler.toml ---"
           cat wrangler.toml
-          echo "--- worker.js (first 5 lines) ---"
-          head -5 worker.js
+          echo "--- worker.js exists ---"
+          ls -lh worker.js
         env:
           CF_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CF_ACCOUNT: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
@@ -31,4 +39,6 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          wranglerVersion: '3.101.0'
           workingDirectory: "."
+          command: deploy --verbose
