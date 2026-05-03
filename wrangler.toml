@@ -1,0 +1,18 @@
+name = "nexus-backend"
+main = "worker.js"
+compatibility_date = "2024-01-01"
+compatibility_flags = ["nodejs_compat"]
+
+[vars]
+ENVIRONMENT = "production"
+
+# Secrets are injected at runtime via `wrangler secret put`.
+# Run each command once from your terminal:
+#
+#   npx wrangler secret put THIRDWEB_SECRET_KEY  --name nexus-backend
+#   npx wrangler secret put THIRDWEB_CLIENT_ID   --name nexus-backend
+#   npx wrangler secret put SOLANA_PRIVATE_KEY   --name nexus-backend
+#   npx wrangler secret put ANTHROPIC_API_KEY    --name nexus-backend
+#   npx wrangler secret put JWT_SECRET           --name nexus-backend
+#   npx wrangler secret put SOLANA_RPC_URL       --name nexus-backend
+#   npx wrangler secret put ALLOWED_ORIGINS      --name nexus-backend
