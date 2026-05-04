@@ -18,7 +18,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
 
       - name: Deploy to Cloudflare Workers
         uses: cloudflare/wrangler-action@v3
@@ -28,3 +28,4 @@ jobs:
           wranglerVersion: '4.87.0'
           workingDirectory: .
           command: deploy
+
