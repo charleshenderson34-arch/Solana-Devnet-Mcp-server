@@ -1,6 +1,7 @@
 /**
  * NEXUS · Cloudflare Worker — Production Backend + Isolated MCP Bridge
  * © 2026 Charles Henderson. All rights reserved.
+ * Intellectual Property of Charles Henderson.
  */
 
 import { createRequire } from 'module';
@@ -8,7 +9,7 @@ const require = createRequire(import.meta.url);
 
 // ── CORS ────────────────────────────────────────────────────
 function corsHeaders(env, req) {
-  const allowed = (env.ALLOWED_ORIGINS || "http://localhost:5173,https://nexus.yourdomain.com").split(",").map(s => s.trim());
+  const allowed = (env.ALLOWED_ORIGINS || "http://localhost:5173").split(",").map(s => s.trim());
   const origin = req?.headers?.get("Origin") || "";
   const allowedOrigin = allowed.includes(origin) ? origin : allowed[0];
   return {
@@ -149,9 +150,10 @@ export default {
 
 // ── MCP BRIDGE (Node.js/Local) ──────────────────────────────
 if (typeof process !== 'undefined' && process.release?.name === 'node') {
-  const { Server } = require("@modelcontextprotocol/sdk/server/index.js");
-  const { StdioServerTransport } = require("@modelcontextprotocol/sdk/server/stdio.js");
-  const { CallToolRequestSchema, ListToolsRequestSchema } = require("@modelcontextprotocol/sdk/types.js");
+  // Using Absolute Paths to ensure resolution in iSH
+  const { Server } = require("/Root/nexus-backend/node_modules/@modelcontextprotocol/sdk/dist/cjs/server/index.js");
+  const { StdioServerTransport } = require("/Root/nexus-backend/node_modules/@modelcontextprotocol/sdk/dist/cjs/server/stdio.js");
+  const { CallToolRequestSchema, ListToolsRequestSchema } = require("/Root/nexus-backend/node_modules/@modelcontextprotocol/sdk/dist/cjs/types.js");
 
   const server = new Server({
     name: "nexus-backend-mcp",
