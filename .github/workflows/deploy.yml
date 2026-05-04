@@ -1,5 +1,21 @@
 name: Deploy nexus-backend to Cloudflare Workers
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4.2.2
+      - uses: actions/setup-node@v4.4.0
+        with:
+          node-version: '24'
+      - uses: cloudflare/wrangler-action@v3.14.1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+
+
 on:
   push:
     branches: [main]
@@ -14,18 +30,18 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Node 22
+      - name: Setup Node 24
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 24
 
       - name: Install dependencies
         run: npm install
 
       - name: Check secrets
         run: |
-          [ -n "$CF_TOKEN" ] && echo "✅ CLOUDFLARE_API_TOKEN set" || (echo "❌ CLOUDFLARE_API_TOKEN MISSING" && exit 1)
-          [ -n "$CF_ACCOUNT_ID" ] && echo "✅ CLOUDFLARE_ACCOUNT_ID set" || (echo "❌ CLOUDFLARE_ACCOUNT_ID MISSING" && exit 1)
+          [ -n "$CLOUDFLARE_API_KEY" ] && echo "✅ CLOUDFLARE_API_TOKEN set" || (echo "❌ CLOUDFLARE_API_TOKEN MISSING" && exit 1)
+          [ -n "$CLOUDFLARE_ACCOUNT_ID" ] && echo "✅ CLOUDFLARE_ACCOUNT_ID set" || (echo "❌ CLOUDFLARE_ACCOUNT_ID MISSING" && exit 1)
           echo "--- wrangler.toml ---"
           cat wrangler.toml
           echo "--- worker.js exists ---"
@@ -42,19 +58,9 @@ jobs:
           wranglerVersion: '3.101.0'
           workingDirectory: "."
           
-name: Deploy nexus-backend to Cloudflare Workers
 
-env:
-  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4.2.2
-      - uses: actions/setup-node@v4.4.0
-        with:
-          node-version: '20'
-      - uses: cloudflare/wrangler-action@v3.14.1
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+
+
+
+
