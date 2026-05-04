@@ -2,6 +2,7 @@ name = "nexus-backend"
 main = "worker.js"
 compatibility_date = "2024-01-01"
 compatibility_flags = ["nodejs_compat"]
+account_id = "9dcc6dd59d55b7066026b0962f822e4f"
 
 [vars]
 ENVIRONMENT = "production"
@@ -16,17 +17,3 @@ ENVIRONMENT = "production"
 #   npx wrangler secret put JWT_SECRET           --name nexus-backend
 #   npx wrangler secret put SOLANA_RPC_URL       --name nexus-backend
 #   npx wrangler secret put ALLOWED_ORIGINS      --name nexus-backend
-
-name = "your-worker-name"
-main = "src/index.js"
-compatibility_date = "2024-01-01"
-account_id = "9dcc6dd59d55b7066026b0962f822e4f"  # ← required
-
-- name: Deploy to Cloudflare Workers
-  uses: cloudflare/wrangler-action@v3
-  with:
-    apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-    accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}  # add this
-  with:
-    apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-    command: whoami
