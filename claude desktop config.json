@@ -1,8 +1,13 @@
 {
   "mcpServers": {
-    "chrome-devtools": {
-      "command": "npx",
-      "args": ["-y", "chrome-devtools-mcp@latest"]
+    "nexus-backend-mcp": {
+      "command": "node",
+      "args": ["/Root/nexus-backend/worker.js"],
+      "env": {
+        "JWT_SECRET": "60d2a75cc544ed98689df8a977d7e062f9c0b8a91f83bffade0efde8965cf8d1",
+        "SOLANA_RPC_URL": "https://solana-devnet.g.alchemy.com/v2/RpMtmcFjjH4P737rmQvgun0TXXwNcAFW",
+        "ENVIRONMENT": "production"
+      }
     }
   }
 }
