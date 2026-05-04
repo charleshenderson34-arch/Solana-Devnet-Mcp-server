@@ -3,6 +3,9 @@
  * © 2026 Charles Henderson. All rights reserved.
  */
 
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+
 // ── CORS ────────────────────────────────────────────────────
 function corsHeaders(env, req) {
   const allowed = (env.ALLOWED_ORIGINS || "http://localhost:5173,https://nexus.yourdomain.com").split(",").map(s => s.trim());
@@ -71,28 +74,6 @@ async function solanaRpc(method, params, env) {
     body: JSON.stringify({ jsonrpc: "2.0", id: 1, method, params }),
   });
   return res.json();
-}
-
-// ── THIRDWEB HELPERS ─────────────────────────────────────────
-const TW_BASE = "https://api.thirdweb.com/v1";
-function twHeaders(env) {
-  return { "x-secret-key": env.THIRDWEB_SECRET_KEY || "", "Content-Type": "application/json" };
-}
-
-async function twGetWallet(identifier, env) {
-  const r = await fetch(`${TW_BASE}/wallets/server`, {
-    method: "POST", headers: twHeaders(env),
-    body: JSON.stringify({ identifier }),
-  });
-  return r.json();
-}
-
-async function twSendTx(from, chainId, to, value, env) {
-  const r = await fetch(`${TW_BASE}/transactions`, {
-    method: "POST", headers: twHeaders(env),
-    body: JSON.stringify({ chainId, from, transactions: [{ to, value, data: "0x" }] }),
-  });
-  return r.json();
 }
 
 // ── ROUTES ──────────────────────────────────────────────────
