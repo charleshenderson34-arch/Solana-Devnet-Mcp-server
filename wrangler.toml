@@ -6,14 +6,20 @@ account_id = "9dcc6dd59d55b7066026b0962f822e4f"
 
 [vars]
 ENVIRONMENT = "production"
+SENTIO_PROJECT = "charles_henderson34/coinbase-wrapped-eth"
+CBETH_WALLET = "0x4828c0e00d0a9903762a3a4406aa9eb1f5df6a6e"
 
-# Secrets are injected at runtime via `wrangler secret put`.
-# Run each command once from your terminal:
-#
-#   npx wrangler secret put THIRDWEB_SECRET_KEY  --name nexus-backend
-#   npx wrangler secret put THIRDWEB_CLIENT_ID   --name nexus-backend
-#   npx wrangler secret put SOLANA_PRIVATE_KEY   --name nexus-backend
-#   npx wrangler secret put ANTHROPIC_API_KEY    --name nexus-backend
-#   npx wrangler secret put JWT_SECRET           --name nexus-backend
-#   npx wrangler secret put SOLANA_RPC_URL       --name nexus-backend
-#   npx wrangler secret put ALLOWED_ORIGINS      --name nexus-backend
+# KV Namespaces
+[[kv_namespaces]]
+binding = "MERKLE_STORE"
+id = "6f6f495861f84bf59fc49f6efe2e65c6"
+
+[[kv_namespaces]]
+binding = "ETORO_CACHE"
+id = "a99cc21094634a4c80e0d8ee813157d2"
+
+# D1 Database
+[[d1_databases]]
+binding = "DB"
+database_name = "nexus-provenance"
+database_id = "3ab9be54-abb6-4b15-99b6-a32fc7b4c388"
