@@ -1,11 +1,12 @@
 /**
- * NEXUS · Cloudflare Worker — Production Backend
+ * NEXUS · Cloudflare Worker — Production Backend + Isolated MCP Bridge
+ * © 2026 Charles Henderson. All rights reserved.
  */
 
 // ── CORS ────────────────────────────────────────────────────
 function corsHeaders(env, req) {
   const allowed = (env.ALLOWED_ORIGINS || "http://localhost:5173,https://nexus.yourdomain.com").split(",").map(s => s.trim());
-  const origin = req.headers.get("Origin") || "";
+  const origin = req?.headers?.get("Origin") || "";
   const allowedOrigin = allowed.includes(origin) ? origin : allowed[0];
   return {
     "Access-Control-Allow-Origin": allowedOrigin,
@@ -114,50 +115,18 @@ const ROUTES = {
       status: 200, body: {
         slot: slotRes.result,
         health: healthRes.result,
-        cluster: env.SOLANA_RPC_URL?.includes("devnet") ? "devnet" : env.SOLANA_RPC_URL?.includes("mainnet") ? "mainnet-beta" : "custom",
+        cluster: env.SOLANA_RPC_URL?.includes("devnet") ? "devnet" : "mainnet-beta",
         timestamp: Date.now(),
       }
     };
   },
 
   "POST /api/solana/balance": async (req, env) => {
-    const { pubkey } = await req.json().catch(() => ({}));
+    const body = req.body || await req.json().catch(() => ({}));
+    const { pubkey } = body;
     if (!pubkey) return { status: 400, body: { error: "pubkey required" } };
     const res = await solanaRpc("getBalance", [pubkey], env);
     return { status: 200, body: { pubkey, lamports: res.result?.value ?? 0, sol: (res.result?.value ?? 0) / 1e9 } };
-  },
-
-  "POST /api/solana/transactions": async (req, env) => {
-    const { pubkey, limit = 10 } = await req.json().catch(() => ({}));
-    if (!pubkey) return { status: 400, body: { error: "pubkey required" } };
-    const res = await solanaRpc("getSignaturesForAddress", [pubkey, { limit }], env);
-    return { status: 200, body: { transactions: res.result ?? [] } };
-  },
-
-  "POST /api/solana/memo": async (req, env, authed) => {
-    if (!authed) return { status: 401, body: { error: "Unauthorized" } };
-    const { payload } = await req.json().catch(() => ({}));
-    if (!payload) return { status: 400, body: { error: "payload required" } };
-    const jobId = crypto.randomUUID();
-    return { status: 202, body: { queued: true, jobId, payload, message: "Memo queued for signing" } };
-  },
-
-  "POST /api/wallet/get": async (req, env, authed) => {
-    if (!authed) return { status: 401, body: { error: "Unauthorized" } };
-    const { identifier } = await req.json().catch(() => ({}));
-    if (!identifier) return { status: 400, body: { error: "identifier required" } };
-    const data = await twGetWallet(identifier, env);
-    return { status: 200, body: { address: data?.result?.address, identifier } };
-  },
-
-  "POST /api/wallet/send": async (req, env, authed) => {
-    if (!authed) return { status: 401, body: { error: "Unauthorized" } };
-    const { identifier, chainId, to, value } = await req.json().catch(() => ({}));
-    if (!identifier || !chainId || !to || !value) return { status: 400, body: { error: "identifier, chainId, to, value required" } };
-    const wallet = await twGetWallet(identifier, env);
-    if (!wallet?.result?.address) return { status: 500, body: { error: "Wallet fetch failed" } };
-    const tx = await twSendTx(wallet.result.address, chainId, to, value, env);
-    return { status: 200, body: { txId: tx?.result?.transactionIds?.[0], from: wallet.result.address } };
   },
 
   "GET /api/noc/status": async (req, env) => {
@@ -173,56 +142,80 @@ const ROUTES = {
       status: 200, body: {
         slot: slotRes.result,
         tps: avgTps,
-        samples: samples.slice(0, 3),
         ts: Date.now(),
       }
     };
-  },
-
-  "POST /api/chat": async (req, env, authed) => {
-    if (!authed) return { status: 401, body: { error: "Unauthorized" } };
-    const { messages, systemPrompt } = await req.json().catch(() => ({}));
-    const aiRes = await fetch("https://api.anthropic.com/v1/messages", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "x-api-key": env.ANTHROPIC_API_KEY || "",
-        "anthropic-version": "2023-06-01",
-      },
-      body: JSON.stringify({
-        model: "claude-sonnet-4-20250514",
-        max_tokens: 1024,
-        system: systemPrompt || "You are NEXUS AI, a Solana network operations assistant. Be concise and technical.",
-        messages: messages || [],
-      }),
-    });
-    const data = await aiRes.json();
-    return { status: 200, body: data };
-  },
+  }
 };
 
-// ── MAIN HANDLER ─────────────────────────────────────────────
+// ── MAIN HANDLER (Cloudflare) ────────────────────────────────
 export default {
   async fetch(req, env) {
-    if (req.method === "OPTIONS") {
-      return new Response(null, { status: 204, headers: corsHeaders(env, req) });
-    }
-
+    if (req.method === "OPTIONS") return new Response(null, { status: 204, headers: corsHeaders(env, req) });
     const url = new URL(req.url);
     const routeKey = `${req.method} ${url.pathname}`;
     const handler = ROUTES[routeKey];
-
-    if (!handler) {
-      return respond({ error: "Not found", path: url.pathname }, 404, env, req);
-    }
-
+    if (!handler) return respond({ error: "Not found" }, 404, env, req);
     try {
       const authed = await verifyToken(req, env);
       const result = await handler(req, env, authed);
       return respond(result.body, result.status, env, req);
     } catch (err) {
-      console.error("Worker error:", err);
       return respond({ error: "Internal server error" }, 500, env, req);
     }
   },
 };
+
+// ── MCP BRIDGE (Node.js/Local) ──────────────────────────────
+if (typeof process !== 'undefined' && process.release?.name === 'node') {
+  const { Server } = require("@modelcontextprotocol/sdk/server/index.js");
+  const { StdioServerTransport } = require("@modelcontextprotocol/sdk/server/stdio.js");
+  const { CallToolRequestSchema, ListToolsRequestSchema } = require("@modelcontextprotocol/sdk/types.js");
+
+  const server = new Server({
+    name: "nexus-backend-mcp",
+    version: "1.0.0"
+  }, {
+    capabilities: { tools: {} }
+  });
+
+  server.setRequestHandler(ListToolsRequestSchema, async () => ({
+    tools: [
+      {
+        name: "get_nexus_status",
+        description: "Check Solana network operations center status",
+        inputSchema: { type: "object", properties: {} }
+      },
+      {
+        name: "get_solana_balance",
+        description: "Check SOL balance for a public key",
+        inputSchema: {
+          type: "object",
+          properties: { pubkey: { type: "string" } },
+          required: ["pubkey"]
+        }
+      }
+    ]
+  }));
+
+  server.setRequestHandler(CallToolRequestSchema, async (request) => {
+    const env = process.env;
+    try {
+      if (request.params.name === "get_nexus_status") {
+        const res = await ROUTES["GET /api/noc/status"](null, env);
+        return { content: [{ type: "text", text: JSON.stringify(res.body, null, 2) }] };
+      }
+      if (request.params.name === "get_solana_balance") {
+        const mockReq = { body: request.params.arguments };
+        const res = await ROUTES["POST /api/solana/balance"](mockReq, env);
+        return { content: [{ type: "text", text: JSON.stringify(res.body, null, 2) }] };
+      }
+      throw new Error("Tool not found");
+    } catch (error) {
+      return { content: [{ type: "text", text: `Error: ${error.message}` }], isError: true };
+    }
+  });
+
+  const transport = new StdioServerTransport();
+  server.connect(transport).catch(console.error);
+}
